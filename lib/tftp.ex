@@ -4,7 +4,7 @@
 # as published by Sam Hocevar. See the COPYING.WTFPL file for more details.
 
 defmodule TFTP do
-  def shell_cmd(command) do
+  defp shell_cmd(command) do
     command
       |> :binary.bin_to_list
       |> :os.cmd
@@ -52,7 +52,8 @@ defmodule TFTP do
       |> String.replace(~r/'/, "")
       |> split_file_path
 
-    exec_tftp_cmd("get '#{path}/#{file}'", host, mode)
+    "get '#{path}/#{file}'"
+      |> exec_tftp_cmd(host, mode)
   end
 
   @spec put(String.t, :ascii | :binary) :: :ok | {:error, atom} | {:error, String.t}
@@ -61,6 +62,7 @@ defmodule TFTP do
       |> String.replace(~r/'/, "")
       |> split_file_path
 
-    exec_tftp_cmd("put '#{path}/#{file}' /#{file}", host, mode)
+    "put '#{path}/#{file}' /#{file}"
+      |> exec_tftp_cmd(host, mode)
   end
 end
