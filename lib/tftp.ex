@@ -15,12 +15,15 @@ defmodule TFTP do
     case output do
       "" ->
         :ok
+
       error ->
         case String.strip(error) do
           "Error code 1: File not found" ->
             {:error, :enoent}
+
           "Transfer timed out." ->
             {:error, :etimedout}
+
           unknown_error ->
             {:error, unknown_error}
         end
@@ -34,13 +37,15 @@ defmodule TFTP do
   end
 
   defp split_file_path(filepath) do
-    [file|dirs] = filepath
-      |> String.split("/")
-      |> Enum.reverse
+    [file|dirs] =
+      filepath
+        |> String.split("/")
+        |> Enum.reverse
 
     case (dirs |> Enum.reverse |> Enum.join("/")) do
       "" ->
         {".", file}
+
       path ->
         {path, file}
     end
@@ -48,9 +53,10 @@ defmodule TFTP do
 
   @spec get(String.t, :ascii | :binary) :: :ok | {:error, atom} | {:error, String.t}
   def get(filepath, host, mode \\ :ascii) do
-    {path, file} = filepath
-      |> String.replace(~r/'/, "")
-      |> split_file_path
+    {path, file} =
+      filepath
+        |> String.replace(~r/'/, "")
+        |> split_file_path
 
     "get '#{path}/#{file}'"
       |> exec_tftp_cmd(host, mode)
@@ -58,9 +64,10 @@ defmodule TFTP do
 
   @spec put(String.t, :ascii | :binary) :: :ok | {:error, atom} | {:error, String.t}
   def put(filepath, host, mode \\ :ascii) do
-    {path, file} = filepath
-      |> String.replace(~r/'/, "")
-      |> split_file_path
+    {path, file} =
+      filepath
+        |> String.replace(~r/'/, "")
+        |> split_file_path
 
     "put '#{path}/#{file}' /#{file}"
       |> exec_tftp_cmd(host, mode)
